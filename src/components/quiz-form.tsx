@@ -17,6 +17,8 @@ import { Button } from './ui/button';
 import { useCallback, useState } from 'react';
 import { shuffleArray, upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { Label } from './ui/label';
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 
 const defaultValues: QuizRequest = {
   amount: 5,
@@ -28,7 +30,7 @@ const defaultValues: QuizRequest = {
 export default function QuizForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { control, handleSubmit } = useForm<QuizRequest>({
+  const form = useForm<QuizRequest>({
     defaultValues,
   });
 
@@ -66,92 +68,93 @@ export default function QuizForm() {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <Controller
-        name="amount"
-        control={control}
-        render={({ field }) => (
-          <Input
-            type="number"
-            min={5}
-            max={50}
-            step={5}
-            onChange={field.onChange}
-            defaultValue={field.value}
-            className="w-[180px]"
-          />
-        )}
-      />
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-6"
+      >
+        <FormField
+          control={form.control}
+          name="amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Question Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min={5}
+                  max={50}
+                  step={5}
+                  {...field}
+                  required
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <Controller
-        name="category"
-        control={control}
-        render={({ field }) => (
-          <Select
-            onValueChange={field.onChange}
-            defaultValue={field.value?.toString()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {quizCategories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id.toString()}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        )}
-      />
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value?.toString()}
+                required
+              >
+                <FormControl className="w-full">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    {quizCategories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id.toString()}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
 
-      <Controller
-        name="difficulty"
-        control={control}
-        render={({ field }) => (
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select difficulty" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {quizDifficulties.map((dif) => (
-                  <SelectItem key={dif} value={dif}>
-                    {upperFirstChar(dif)}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        )}
-      />
+        <FormField
+          control={form.control}
+          name="difficulty"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Difficulty</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+                required
+              >
+                <FormControl className="w-full">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select difficulty" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    {quizDifficulties.map((dif) => (
+                      <SelectItem key={dif} value={dif}>
+                        {upperFirstChar(dif === 'any' ? 'Any Difficulty' : dif)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
 
-      <Controller
-        name="type"
-        control={control}
-        render={({ field }) => (
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select question type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {quizTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {upperFirstChar(type)}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        )}
-      />
-
-      <Button type="submit" disabled={isLoading}>
-        Submit
-      </Button>
-    </form>
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   );
 }

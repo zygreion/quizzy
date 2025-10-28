@@ -1,6 +1,6 @@
 'use client';
 
-import QuizContainer from '@/components/quiz/quiz';
+import QuizContainer from '@/components/quiz/quiz-container';
 import { dummyQuizzes } from '@/lib/data';
 import { useParams } from 'next/navigation';
 

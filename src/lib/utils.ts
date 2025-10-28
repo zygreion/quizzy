@@ -23,3 +23,11 @@ export function shuffleArray(array: any[]) {
 
   return arr;
 }
+
+export function getTimer(): number {
+  return Number(localStorage.getItem('timer'));
+}
+
+export function setTimer(n: number) {
+  localStorage.setItem('timer', n.toString());
+}
