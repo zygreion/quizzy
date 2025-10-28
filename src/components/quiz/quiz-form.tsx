@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   Select,
   SelectTrigger,
@@ -10,15 +10,16 @@ import {
   SelectGroup,
 } from '@/components/ui/select';
 import { dummyQuizzes, quizCategories } from '@/lib/data';
-import { Input } from './ui/input';
-import { quizDifficulties, QuizRequest, quizTypes } from '@/types';
+import { Input } from '../ui/input';
+import { quizDifficulties, QuizRequest } from '@/types';
 import { getQuizzes } from '@/lib/queries';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { useCallback, useState } from 'react';
-import { shuffleArray, upperFirstChar } from '@/lib/utils';
+import { shuffleQuizAnswers, upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { Label } from './ui/label';
-import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
+import { Spinner } from '../ui/spinner';
+import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 
 const defaultValues: QuizRequest = {
   amount: 5,
@@ -27,44 +28,45 @@ const defaultValues: QuizRequest = {
   difficulty: 'any',
 };
 
+function clearAnyValues(data: QuizRequest): QuizRequest {
+  const newData = { ...data };
+
+  for (const [key, value] of Object.entries(newData) as [
+    keyof QuizRequest,
+    string,
+  ][]) {
+    if (
+      (key === 'category' && Number(value) === -1) ||
+      ((key === 'difficulty' || key === 'type') && value === 'any')
+    ) {
+      newData[key] = undefined;
+    }
+  }
+
+  return newData;
+}
+
 export default function QuizForm() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<QuizRequest>({
     defaultValues,
   });
 
   const onSubmit = useCallback(async (data: QuizRequest) => {
-    const newData = { ...data };
-
-    if (isLoading) return;
-    setIsLoading(true);
-
-    for (const [key, value] of Object.entries(newData) as [
-      keyof QuizRequest,
-      string,
-    ][]) {
-      if (
-        (key === 'category' && Number(value) === -1) ||
-        ((key === 'difficulty' || key === 'type') && value === 'any')
-      ) {
-        newData[key] = undefined;
-      }
-    }
-
+    const newData = clearAnyValues(data);
     const res = await getQuizzes(newData);
     const quizzes = res.results;
 
     for (const quiz of quizzes) {
-      quiz.shuffled_answers = shuffleArray([
-        quiz.correct_answer,
-        ...quiz.incorrect_answers,
+      const { type, correct_answer, incorrect_answers } = quiz;
+
+      quiz.shuffled_answers = shuffleQuizAnswers(type, [
+        correct_answer,
+        ...incorrect_answers,
       ]);
     }
     dummyQuizzes.push(...quizzes);
-
-    setIsLoading(false);
-    router.push('/quiz/0');
+    router.push('/quiz');
   }, []);
 
   return (
@@ -129,31 +131,31 @@ export default function QuizForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Difficulty</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-                required
-              >
-                <FormControl className="w-full">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    {quizDifficulties.map((dif) => (
-                      <SelectItem key={dif} value={dif}>
-                        {upperFirstChar(dif === 'any' ? 'Any Difficulty' : dif)}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <ToggleGroup
+                  type="single"
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  variant="outline"
+                  className="grid w-full grid-cols-4 gap-2"
+                  spacing={1}
+                >
+                  {quizDifficulties.map((dif, i) => {
+                    return (
+                      <ToggleGroupItem value={dif} key={i}>
+                        <span className="truncate">{upperFirstChar(dif)}</span>
+                      </ToggleGroupItem>
+                    );
+                  })}
+                </ToggleGroup>
+              </FormControl>
             </FormItem>
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {!form.formState.isSubmitting ? 'Submit' : <Spinner />}
+        </Button>
       </form>
     </Form>
   );

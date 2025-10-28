@@ -1,3 +1,4 @@
+import { Quiz } from '@/types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,15 +14,20 @@ export function decodeStr(encodedString: string): string {
   return decodeURIComponent(encodedString);
 }
 
-export function shuffleArray(array: any[]) {
-  const arr = [...array];
-
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+// Only shuffle when type = 'multiple'
+export function shuffleQuizAnswers(type: Quiz['type'], answers: string[]) {
+  if (type === 'boolean') {
+    return ['False', 'True'];
   }
 
-  return arr;
+  const shuffled = [...answers];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
 }
 
 export function getTimer(): number {

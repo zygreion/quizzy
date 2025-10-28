@@ -46,11 +46,11 @@ export default async function LoginPage() {
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" asChild>
               <Link href="/">Sign In</Link>
             </Button>
             <Link
-              href="/register"
+              href="/auth/register"
               className="inline-block text-sm underline-offset-4 hover:underline"
             >
               Don't have an account? Register

@@ -14,7 +14,6 @@ function generateSearchParams(request: QuizRequest): string {
 
 export async function getQuizzes(request: QuizRequest): Promise<QuizResponse> {
   const searchParams = generateSearchParams(request);
-  console.log(searchParams);
 
   const data = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}?${searchParams}`

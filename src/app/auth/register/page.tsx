@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 export default async function LoginPage() {
   return (
-    <Card className="w-full max-w-lg">
+    <Card className="w-full">
       <CardHeader className="text-center">
         <CardTitle className="text-lg">Register</CardTitle>
         <CardDescription>Start your journey with us today</CardDescription>
@@ -43,7 +43,7 @@ export default async function LoginPage() {
               Sign Up
             </Button>
             <Link
-              href="/login"
+              href="/auth/login"
               className="inline-block text-sm underline-offset-4 hover:underline"
             >
               Already have an account? Login
