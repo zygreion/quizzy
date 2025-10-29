@@ -1,3 +1,4 @@
+import { API_URL } from '@/config/config';
 import { QuizRequest, QuizResponse } from '@/types';
 
 function generateSearchParams(request: QuizRequest): string {
@@ -16,7 +17,7 @@ export async function getQuizzes(request: QuizRequest): Promise<QuizResponse> {
   const searchParams = generateSearchParams(request);
 
   const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}?${searchParams}`
+    `${API_URL}?${searchParams}`
   );
 
   if (!data.ok) {

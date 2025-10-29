@@ -153,7 +153,11 @@ export default function QuizForm() {
           )}
         />
 
-        <Button type="submit" disabled={form.formState.isSubmitting}>
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className="not-disabled:hover:cursor-pointer"
+        >
           {!form.formState.isSubmitting ? 'Submit' : <Spinner />}
         </Button>
       </form>

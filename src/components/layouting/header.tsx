@@ -1,0 +1,47 @@
+'use client';
+
+import { logout } from '@/actions/auth';
+import { Button } from '../ui/button';
+import { useCallback } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { LogoutIcon } from '../icons';
+import { usePathname } from 'next/navigation';
+
+interface HeaderProps {
+  email: string;
+}
+
+export function Header({ email }: HeaderProps) {
+  const pathname = usePathname();
+
+  if (pathname === '/quiz') {
+    return;
+  }
+
+  const truncatedEmail = email.slice(0, email.indexOf('@'));
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+  }, []);
+
+  return (
+    <div className="flex w-full items-center justify-between gap-4 py-4">
+      <div className="flex items-center gap-3">
+        <Avatar>
+          <AvatarImage src="/shadcn-avatar.jpg" alt="@shadcn" />
+          <AvatarFallback>PP</AvatarFallback>
+        </Avatar>
+        <p>@{truncatedEmail}</p>
+      </div>
+      <Button
+        variant="destructive"
+        size="sm"
+        onClick={handleLogout}
+        className="flex items-center gap-2 hover:cursor-pointer"
+      >
+        <span className="leading-0">Logout </span>
+        <LogoutIcon className="text-amber-500" />
+      </Button>
+    </div>
+  );
+}

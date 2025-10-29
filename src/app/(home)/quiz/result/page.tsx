@@ -28,10 +28,10 @@ export default function ResultPage() {
   return (
     <div>
       <p>
-        You have answered {answers.length} out of {quizzes.length} questions!
+        You've answered {answers.length} out of {quizzes.length} questions.
       </p>
-      <p>Correct answer = {correctAnswers.length}</p>
-      <p>Incorrect answer = {incorrectAnswers.length}</p>
+      <p>✅ Correct: {correctAnswers.length}</p>
+      <p>❌ Incorrect: {incorrectAnswers.length}</p>
 
       <Button asChild>
         <Link href="/">Go Home</Link>
