@@ -1,67 +1,73 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { userAnswers, dummyQuizzes } from '@/lib/data';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import QuizContainer from '@/components/quiz/quiz-container';
-import useTimer from '@/hooks/use-timer';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
+import { useTimerStore } from '@/hooks/use-timer-store';
+import { useTimerEffect } from '@/hooks/use-timer-effect';
+import { useQuizzesStore } from '@/hooks/use-quizzes';
+import { useQuizProgressStore } from '@/hooks/use-quiz-progress';
+import clsx from 'clsx';
 
 export default function QuizPage() {
-  const quizzes = dummyQuizzes;
+  const { quizzes, getQuizNo } = useQuizzesStore();
+  const { finished, userAnswers, addAnswer } = useQuizProgressStore();
 
-  if (quizzes.length < 1) {
-    return <p>Soal tidak ditemukan!</p>;
-  }
+  if (quizzes.length < 1) return notFound();
 
   const router = useRouter();
-  const [no, setNo] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  const { seconds } = useTimer(60);
+  const [mounted, setMounted] = useState(false);
+  const currentNo = useMemo(() => userAnswers.length, [userAnswers]);
+
+  const { running, timer, startTimer } = useTimerStore();
+  useTimerEffect();
+
+  useEffect(() => {
+    setMounted(true);
+
+    if (!running) {
+      startTimer(quizzes.length * 5);
+    } else {
+      startTimer(timer);
+    }
+  }, []);
 
   const answerHandler = useCallback(
     (answer: string) => {
-      const ansLen = answers.length;
-      const quizLen = quizzes.length;
-
-      if (ansLen < quizLen) {
-        if (ansLen < quizLen - 1) {
-          setNo((prev) => prev + 1);
-        }
-
-        setAnswers((prev) => [...prev, answer]);
+      if (currentNo < quizzes.length) {
+        addAnswer(answer);
       }
     },
-    [answers]
+    [currentNo, quizzes]
   );
 
   useEffect(() => {
-    console.log(
-      no,
-      answers.map((answer, i) => answer === quizzes[i].correct_answer)
-    );
+    if (!mounted) return;
 
-    if (answers.length >= quizzes.length) {
-      userAnswers.push(...answers);
+    if (timer <= 0 || currentNo >= quizzes.length) {
       router.push('/quiz/result');
     }
-  }, [answers]);
-
-  useEffect(() => {
-    if (seconds <= 0) {
-      router.push('/quiz/result');
-    }
-  }, [seconds]);
+  }, [mounted, timer, currentNo, quizzes]);
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between">
         <p>
-          Question {no + 1} out of {dummyQuizzes.length}
+          Question {Math.min(currentNo + 1, quizzes.length)} out of{' '}
+          {quizzes.length}
         </p>
-        <p>Time Left: {seconds}s</p>
+        <div
+          className={clsx(timer > 15 ? 'text-amber-100' : 'text-destructive')}
+        >
+          <span>Time Left: </span>
+          <span>{timer}s</span>
+        </div>
       </div>
 
-      <QuizContainer quiz={quizzes[no]} onSelect={answerHandler} />
+      <QuizContainer
+        quiz={getQuizNo(Math.min(currentNo, quizzes.length - 1))}
+        onSelect={answerHandler}
+      />
     </div>
   );
 }

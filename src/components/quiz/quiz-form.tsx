@@ -9,17 +9,20 @@ import {
   SelectItem,
   SelectGroup,
 } from '@/components/ui/select';
-import { dummyQuizzes, quizCategories } from '@/lib/data';
+import { quizCategories } from '@/lib/data';
 import { Input } from '../ui/input';
 import { quizDifficulties, QuizRequest } from '@/types';
 import { getQuizzes } from '@/lib/queries';
 import { Button } from '../ui/button';
-import { useCallback, useState } from 'react';
-import { shuffleQuizAnswers, upperFirstChar } from '@/lib/utils';
+import { useCallback, useEffect, useState } from 'react';
+import { upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Spinner } from '../ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { usePreferenceStore } from '@/hooks/use-preference';
+import { useQuizzesStore } from '@/hooks/use-quizzes';
+import { useQuizProgressStore } from '@/hooks/use-quiz-progress';
 
 const defaultValues: QuizRequest = {
   amount: 5,
@@ -36,7 +39,7 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
     string,
   ][]) {
     if (
-      (key === 'category' && Number(value) === -1) ||
+      (key !== 'type' && key === 'category' && Number(value) === -1) ||
       ((key === 'difficulty' || key === 'type') && value === 'any')
     ) {
       newData[key] = undefined;
@@ -47,36 +50,61 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
 }
 
 export default function QuizForm() {
+  const [mounted, setMounted] = useState(false);
+  const { getPreference, setPreference } = usePreferenceStore();
+  const { setQuizzes } = useQuizzesStore();
+  const { clearAnswers, setFinished } = useQuizProgressStore();
+
   const router = useRouter();
   const form = useForm<QuizRequest>({
     defaultValues,
   });
 
-  const onSubmit = useCallback(async (data: QuizRequest) => {
-    const newData = clearAnyValues(data);
-    const res = await getQuizzes(newData);
-    const quizzes = res.results;
+  const {
+    handleSubmit,
+    control,
+    reset,
+    setError,
+    formState: { isSubmitting, errors },
+  } = form;
 
-    for (const quiz of quizzes) {
-      const { type, correct_answer, incorrect_answers } = quiz;
-
-      quiz.shuffled_answers = shuffleQuizAnswers(type, [
-        correct_answer,
-        ...incorrect_answers,
-      ]);
-    }
-    dummyQuizzes.push(...quizzes);
-    router.push('/quiz');
+  useEffect(() => {
+    setMounted(true);
   }, []);
+
+  useEffect(() => {
+    reset(getPreference());
+  }, [mounted]);
+
+  const onSubmit = useCallback(
+    handleSubmit(async (data: QuizRequest) => {
+      const clearedData = clearAnyValues(data);
+      const { response_code, results: quizzes } = await getQuizzes(clearedData);
+
+      if (response_code !== 0) {
+        setError('root', { message: 'Please try another combination' });
+        return;
+      }
+
+      clearAnswers();
+      setFinished(false);
+      setQuizzes(quizzes);
+      setPreference({
+        ...data,
+        amount: Number(data.amount),
+        category: Number(data.category),
+      });
+
+      router.push('/quiz');
+    }),
+    [reset]
+  );
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-6"
-      >
+      <form onSubmit={onSubmit} className="flex flex-col gap-6">
         <FormField
-          control={form.control}
+          control={control}
           name="amount"
           render={({ field }) => (
             <FormItem>
@@ -96,7 +124,7 @@ export default function QuizForm() {
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name="category"
           render={({ field }) => (
             <FormItem>
@@ -126,7 +154,7 @@ export default function QuizForm() {
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name="difficulty"
           render={({ field }) => (
             <FormItem>
@@ -135,7 +163,7 @@ export default function QuizForm() {
                 <ToggleGroup
                   type="single"
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                   variant="outline"
                   className="grid w-full grid-cols-4 gap-2"
                   spacing={1}
@@ -149,16 +177,21 @@ export default function QuizForm() {
                   })}
                 </ToggleGroup>
               </FormControl>
+              {errors.root && (
+                <p className="text-destructive text-sm">
+                  {errors.root.message}
+                </p>
+              )}
             </FormItem>
           )}
         />
 
         <Button
           type="submit"
-          disabled={form.formState.isSubmitting}
+          disabled={isSubmitting}
           className="not-disabled:hover:cursor-pointer"
         >
-          {!form.formState.isSubmitting ? 'Submit' : <Spinner />}
+          {!isSubmitting ? 'Submit' : <Spinner />}
         </Button>
       </form>
     </Form>

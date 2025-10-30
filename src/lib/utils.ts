@@ -29,11 +29,3 @@ export function shuffleQuizAnswers(type: Quiz['type'], answers: string[]) {
 
   return shuffled;
 }
-
-export function getTimer(): number {
-  return Number(localStorage.getItem('timer'));
-}
-
-export function setTimer(n: number) {
-  localStorage.setItem('timer', n.toString());
-}

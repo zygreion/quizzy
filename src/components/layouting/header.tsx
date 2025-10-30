@@ -14,15 +14,15 @@ interface HeaderProps {
 export function Header({ email }: HeaderProps) {
   const pathname = usePathname();
 
-  if (pathname === '/quiz') {
-    return;
-  }
-
   const truncatedEmail = email.slice(0, email.indexOf('@'));
 
   const handleLogout = useCallback(async () => {
     await logout();
   }, []);
+
+  if (pathname === '/quiz') {
+    return;
+  }
 
   return (
     <div className="flex w-full items-center justify-between gap-4 py-4">

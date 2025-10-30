@@ -1,17 +1,23 @@
 'use client';
 
-import { decodeStr, getTimer, setTimer } from '@/lib/utils';
+import { decodeStr, shuffleQuizAnswers } from '@/lib/utils';
 import { Quiz } from '@/types';
 import { Card, CardContent } from '../ui/card';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { useMemo } from 'react';
 
-interface QuizProps {
+interface QuizContainerProps {
   quiz: Quiz;
   onSelect: (s: string) => void;
 }
 
-export default function QuizContainer({ quiz, onSelect }: QuizProps) {
-  const { question, shuffled_answers } = quiz;
+export default function QuizContainer({ quiz, onSelect }: QuizContainerProps) {
+  const { type, question, correct_answer, incorrect_answers } = quiz;
+
+  const shuffledAnswers = useMemo(
+    () => shuffleQuizAnswers(type, [correct_answer, ...incorrect_answers]),
+    [question]
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,7 +35,7 @@ export default function QuizContainer({ quiz, onSelect }: QuizProps) {
         spacing={1}
         key={question}
       >
-        {shuffled_answers?.map((answer, i) => {
+        {shuffledAnswers.map((answer, i) => {
           return (
             <ToggleGroupItem
               value={answer}

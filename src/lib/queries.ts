@@ -15,10 +15,9 @@ function generateSearchParams(request: QuizRequest): string {
 
 export async function getQuizzes(request: QuizRequest): Promise<QuizResponse> {
   const searchParams = generateSearchParams(request);
+  console.log(searchParams);
 
-  const data = await fetch(
-    `${API_URL}?${searchParams}`
-  );
+  const data = await fetch(`${API_URL}?${searchParams}`);
 
   if (!data.ok) {
     console.error('Terjadi kegagalan saat ambil data');
