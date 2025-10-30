@@ -129,12 +129,15 @@ export default function RegisterForm() {
           <Button type="submit" className="w-full hover:cursor-pointer">
             {!isSubmitting ? 'Sign Up' : <Spinner />}
           </Button>
-          <Link
-            href="/auth/login"
-            className="inline-block text-sm underline-offset-4 hover:underline"
-          >
-            Already have an account? Login
-          </Link>
+
+          <div className="text-sm">
+            <span className="text-muted-foreground">
+              Already have an account?
+            </span>{' '}
+            <Link href="/auth/login">
+              <span className="underline-offset-4 hover:underline">Login</span>
+            </Link>
+          </div>
         </div>
       </form>
     </Form>

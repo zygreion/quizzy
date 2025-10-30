@@ -110,12 +110,16 @@ export default function LoginForm() {
             {!isSubmitting ? 'Sign In' : <Spinner />}
           </Button>
 
-          <Link
-            href="/auth/register"
-            className="inline-block text-sm underline-offset-4 hover:underline"
-          >
-            Don't have an account? Register
-          </Link>
+          <div className="text-sm">
+            <span className="text-muted-foreground">
+              Don't have an account?
+            </span>{' '}
+            <Link href="/auth/register">
+              <span className="underline-offset-4 hover:underline">
+                Register
+              </span>
+            </Link>
+          </div>
         </div>
       </form>
     </Form>
