@@ -17,7 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import Link from 'next/link';
 import { QuizRequest } from '@/types';
 import { quizCategories } from '@/lib/data';

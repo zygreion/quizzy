@@ -1,4 +1,4 @@
-import { Quiz, QuizCategory } from '@/types';
+import { QuizCategory } from '@/types';
 
 export const quizCategories: QuizCategory[] = [
   {

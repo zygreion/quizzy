@@ -40,7 +40,7 @@ export function Header({ email }: HeaderProps) {
         className="flex items-center gap-2 hover:cursor-pointer"
       >
         <span className="leading-0">Logout </span>
-        <LogoutIcon className="text-amber-500" />
+        <LogoutIcon />
       </Button>
     </div>
   );
