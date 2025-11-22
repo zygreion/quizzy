@@ -1,4 +1,4 @@
-import { getProfile } from '@/actions/profile';
+import { getUser } from '@/actions/profile';
 import Footer from '@/components/layouting/footer';
 import { Header } from '@/components/layouting/header';
 import { redirect } from 'next/navigation';
@@ -10,7 +10,7 @@ interface HomeLayoutProps {
 export default async function HomeLayout({
   children,
 }: Readonly<HomeLayoutProps>) {
-  const profile = await getProfile();
+  const profile = await getUser();
 
   if (!profile) {
     redirect('/auth/login');

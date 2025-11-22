@@ -1,7 +1,7 @@
-import { getProfile } from '@/actions/profile';
+import { getUser } from '@/actions/profile';
 
 export default async function ProfilePage() {
-  const profile = await getProfile();
+  const profile = await getUser();
 
   if (!profile) {
     return <div>Profile not found</div>;

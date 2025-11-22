@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 
-interface Profile {
+interface TUser {
   id: string;
   email: string;
   first_name: string;
@@ -14,45 +14,33 @@ export async function getUser() {
   const supabase = await createClient();
 
   try {
-    const { data } = await supabase.auth.getUser();
-    return data.user;
-  } catch (error) {
-    return null;
-  }
-}
+    const { data, error: claimsError } = await supabase.auth.getClaims();
 
-export async function getProfile() {
-  const supabase = await createClient();
-
-  try {
-    const {
-      data: { user },
-      error: getUserError,
-    } = await supabase.auth.getUser();
-
-    if (getUserError) {
-      throw new Error(getUserError.message);
-    } else if (!user) {
-      throw new Error('User not logged in!');
+    if (claimsError) {
+      throw new Error(claimsError.message);
+    } else if (!data) {
+      throw new Error('No claims found');
     }
 
-    const { data: profile, error: getProfileError } = await supabase
-      .from('profiles')
+    const userId = data?.claims.sub;
+
+    const { data: user, error: userError } = await supabase
+      .from('users')
       .select('*')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single();
 
-    if (getProfileError) {
-      throw new Error(getProfileError.message);
+    if (userError) {
+      throw new Error(userError.message);
     }
 
     return {
       id: user.id,
       email: user.email,
-      first_name: profile.first_name,
-      last_name: profile.last_name,
-      display_name: profile.display_name,
-    } as Profile;
+      first_name: user.first_name,
+      last_name: user.last_name,
+      display_name: user.display_name,
+    } as TUser;
   } catch (error) {
     console.error(error);
     return null;

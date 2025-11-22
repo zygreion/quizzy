@@ -14,7 +14,7 @@ import { Input } from '../ui/input';
 import { quizDifficulties, QuizRequest, ResponseCodeMessages } from '@/types';
 import { getQuizzes } from '@/lib/queries';
 import { Button } from '../ui/button';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
@@ -52,7 +52,10 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
 export default function QuizForm() {
   const { getPreference, setPreference } = usePreferenceStore();
   const { setQuizzes } = useQuizzesStore();
+  const [mounted, setMounted] = useState(false);
   const { clearAnswers, setFinished } = useQuizProgressStore();
+
+  useEffect(() => setMounted(true), []);
 
   const router = useRouter();
   const form = useForm<QuizRequest>({
@@ -69,7 +72,7 @@ export default function QuizForm() {
 
   useEffect(() => {
     reset(getPreference());
-  }, [getPreference, reset]);
+  }, [getPreference, mounted, reset]);
 
   const onSubmit = handleSubmit(async (data: QuizRequest) => {
     const clearedData = clearAnyValues(data);

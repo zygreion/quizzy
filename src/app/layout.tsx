@@ -17,6 +17,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Quizzy',
   description: 'Train your knowledge about things',
+  authors: [{ name: "Mu'izzy", url: 'https://github.com/zygreion' }],
+  creator: "Mu'izzy",
+  keywords: ['quiz', 'quizzy', 'quiz game', 'quiz app', 'quiz app game'],
+
 };
 
 interface RootLayoutProps {

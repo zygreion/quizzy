@@ -2,7 +2,7 @@ import { QuizRequest, QuizResponse } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
-function generateSearchParams(request: QuizRequest): string {
+function createSearchParams(request: QuizRequest): string {
   const searchParams = new URLSearchParams({
     encode: 'url3986',
   });
@@ -17,13 +17,13 @@ function generateSearchParams(request: QuizRequest): string {
 }
 
 export async function getQuizzes(request: QuizRequest): Promise<QuizResponse> {
-  const searchParams = generateSearchParams(request);
-  const data = await fetch(`${API_URL}?${searchParams}`);
+  const searchParams = createSearchParams(request);
+  const response = await fetch(`${API_URL}?${searchParams}`);
 
-  if (!data.ok) {
+  if (!response.ok) {
     console.error('Terjadi kegagalan saat ambil data');
   }
 
-  const quizResponse = await data.json();
+  const quizResponse = await response.json();
   return quizResponse;
 }
