@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/select';
 import { quizCategories } from '@/lib/data';
 import { Input } from '../ui/input';
-import { quizDifficulties, QuizRequest } from '@/types';
+import { quizDifficulties, QuizRequest, ResponseCodeMessages } from '@/types';
 import { getQuizzes } from '@/lib/queries';
 import { Button } from '../ui/button';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
@@ -50,7 +50,6 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
 }
 
 export default function QuizForm() {
-  const [mounted, setMounted] = useState(false);
   const { getPreference, setPreference } = usePreferenceStore();
   const { setQuizzes } = useQuizzesStore();
   const { clearAnswers, setFinished } = useQuizProgressStore();
@@ -69,36 +68,33 @@ export default function QuizForm() {
   } = form;
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
     reset(getPreference());
-  }, [mounted]);
+  }, [getPreference, reset]);
 
-  const onSubmit = useCallback(
-    handleSubmit(async (data: QuizRequest) => {
-      const clearedData = clearAnyValues(data);
-      const { response_code, results: quizzes } = await getQuizzes(clearedData);
+  const onSubmit = handleSubmit(async (data: QuizRequest) => {
+    const clearedData = clearAnyValues(data);
+    const { response_code, results: quizzes } = await getQuizzes(clearedData);
 
-      if (response_code !== 0) {
-        setError('root', { message: 'Please try another combination' });
-        return;
-      }
+    if (response_code !== undefined && response_code !== 0) {
+      const errorMessage = ResponseCodeMessages[response_code];
 
-      clearAnswers();
-      setFinished(false);
-      setQuizzes(quizzes);
-      setPreference({
-        ...data,
-        amount: Number(data.amount),
-        category: Number(data.category),
+      setError('root', {
+        message: `${errorMessage}: Please try another combination`,
       });
+      return;
+    }
 
-      router.push('/quiz');
-    }),
-    [reset]
-  );
+    clearAnswers();
+    setFinished(false);
+    setQuizzes(quizzes);
+    setPreference({
+      ...data,
+      amount: Number(data.amount),
+      category: Number(data.category),
+    });
+
+    router.push('/quiz');
+  });
 
   return (
     <Form {...form}>

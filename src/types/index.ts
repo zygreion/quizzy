@@ -25,7 +25,16 @@ export interface QuizRequest {
   type?: QuizType;
 }
 
+export const ResponseCodeMessages = {
+  0: 'Success',
+  1: 'No Results',
+  2: 'Invalid Parameter',
+  3: 'Token Not Found',
+  4: 'Token Empty',
+  5: 'ID Not Found',
+} as const;
+
 export interface QuizResponse {
-  response_code: 0 | 1 | 2 | 3 | 4 | 5;
+  response_code?: keyof typeof ResponseCodeMessages;
   results: Quiz[];
 }

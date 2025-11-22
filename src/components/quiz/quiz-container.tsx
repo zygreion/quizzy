@@ -16,7 +16,7 @@ export default function QuizContainer({ quiz, onSelect }: QuizContainerProps) {
 
   const shuffledAnswers = useMemo(
     () => shuffleQuizAnswers(type, [correct_answer, ...incorrect_answers]),
-    [question]
+    [correct_answer, incorrect_answers, type]
   );
 
   return (

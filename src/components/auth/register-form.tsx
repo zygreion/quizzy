@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { RegisterSchema, TRegisterForm } from '@/schemas/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { register } from '@/actions/auth';
 import { Spinner } from '../ui/spinner';
 
@@ -43,29 +43,26 @@ export default function RegisterForm() {
     reset,
   } = form;
 
-  const onSubmit = useCallback(
-    handleSubmit(async (data) => {
-      const newData: TRegisterForm = {
-        email: data.email,
-        first_name: data.first_name.trim(),
-        last_name: data.last_name.trim(),
-        password: data.password,
-      }
+  const onSubmit = handleSubmit(async (data) => {
+    const newData: TRegisterForm = {
+      email: data.email,
+      first_name: data.first_name.trim(),
+      last_name: data.last_name.trim(),
+      password: data.password,
+    };
 
-      const user = await register(newData);
+    const user = await register(newData);
 
-      if (!user) {
-        setError('email', { message: 'Email has already used' });
+    if (!user) {
+      setError('email', { message: 'Email has already used' });
 
-        return;
-      }
+      return;
+    }
 
-      setIsAuthorized(true);
-      reset();
-      router.push('/auth/login');
-    }),
-    []
-  );
+    setIsAuthorized(true);
+    reset();
+    router.push('/auth/login');
+  });
 
   return (
     <Form {...form}>

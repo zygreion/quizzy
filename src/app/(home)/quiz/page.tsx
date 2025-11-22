@@ -13,8 +13,6 @@ export default function QuizPage() {
   const { quizzes, getQuizNo } = useQuizzesStore();
   const { finished, userAnswers, addAnswer } = useQuizProgressStore();
 
-  if (quizzes.length < 1) return notFound();
-
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const currentNo = useMemo(() => userAnswers.length, [userAnswers]);
@@ -30,7 +28,7 @@ export default function QuizPage() {
     } else {
       startTimer(timer);
     }
-  }, []);
+  }, [quizzes.length, running, startTimer, timer]);
 
   const answerHandler = useCallback(
     (answer: string) => {
@@ -38,7 +36,7 @@ export default function QuizPage() {
         addAnswer(answer);
       }
     },
-    [currentNo, quizzes]
+    [addAnswer, currentNo, quizzes.length]
   );
 
   useEffect(() => {
@@ -47,7 +45,9 @@ export default function QuizPage() {
     if (timer <= 0 || currentNo >= quizzes.length) {
       router.push('/quiz/result');
     }
-  }, [mounted, timer, currentNo, quizzes]);
+  }, [mounted, timer, currentNo, quizzes, router]);
+
+  if (quizzes.length < 1) return notFound();
 
   return (
     <div className="flex flex-col gap-6">

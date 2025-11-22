@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/chart';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { QuizRequest } from '@/types';
 import { quizCategories } from '@/lib/data';
 import { upperFirstChar } from '@/lib/utils';
 import { useQuizProgressStore } from '@/hooks/use-quiz-progress';
@@ -43,13 +42,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface ScoreChartProps {
-  preference: QuizRequest;
-  totalCorrect: number;
-  totalIncorrect: number;
-  totalUnanswered: number;
-}
-
 export function ScoreChart() {
   const { getPreference } = usePreferenceStore();
   const { quizzes, clearQuizzes } = useQuizzesStore();
@@ -69,13 +61,13 @@ export function ScoreChart() {
         totalIncorrect,
         totalUnanswered,
       };
-    }, []);
+    }, [quizzes, userAnswers]);
 
   React.useEffect(() => {
     if (quizzes.length < 1) return notFound();
 
     setFinished(true);
-  }, []);
+  }, [quizzes.length, setFinished]);
 
   const { chartData, categoryDisplay, difficultyDisplay } =
     React.useMemo(() => {
@@ -96,7 +88,7 @@ export function ScoreChart() {
       const { category, difficulty } = getPreference();
 
       const categoryDisplay = category
-        ? quizCategories[category].name
+        ? quizCategories.find((cat) => cat.id === category)?.name
         : 'Unknown Category';
 
       const difficultyDisplay = difficulty
@@ -110,13 +102,15 @@ export function ScoreChart() {
         categoryDisplay,
         difficultyDisplay,
       };
-    }, []);
+    }, [getPreference, totalCorrect, totalIncorrect, totalUnanswered]);
 
   const clearData = React.useCallback(() => {
-    clearQuizzes();
-    clearAnswers();
-    clearTimer();
-  }, []);
+    setTimeout(() => {
+      clearQuizzes();
+      clearAnswers();
+      clearTimer();
+    }, 2000);
+  }, [clearAnswers, clearQuizzes, clearTimer]);
 
   return (
     <Card className="flex flex-col">
@@ -179,7 +173,7 @@ export function ScoreChart() {
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
           <span>
-            You've answered {totalCorrect + totalIncorrect} out of{' '}
+            You&apos;ve answered {totalCorrect + totalIncorrect} out of{' '}
             {totalCorrect + totalIncorrect + totalUnanswered} questions
           </span>
         </div>

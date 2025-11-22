@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type UseQuizProgressState = { userAnswers: string[]; finished: boolean };
-type UseQuizProgressActions = {
+type State = { userAnswers: string[]; finished: boolean };
+type Actions = {
   addAnswer: (newAnswer: string) => void;
   clearAnswers: () => void;
   setFinished: (value: boolean) => void;
 };
-type UseQuizProgressStore = UseQuizProgressState & UseQuizProgressActions;
+type Store = State & Actions;
 
-export const useQuizProgressStore = create<UseQuizProgressStore>()(
+export const useQuizProgressStore = create<Store>()(
   persist(
     (set, get) => ({
       userAnswers: [],

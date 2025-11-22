@@ -1,6 +1,5 @@
 'use client';
 
-import { useCallback, useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
@@ -32,21 +31,17 @@ export default function LoginForm() {
     reset,
   } = form;
 
-  const onSubmit = useCallback(
-    handleSubmit(async (data) => {
-      const user = await login(data);
+  const onSubmit = handleSubmit(async (data) => {
+    const user = await login(data);
 
-      if (!user) {
-        setError('root', { message: 'Invalid email or password' });
+    if (!user) {
+      setError('root', { message: 'Invalid email or password' });
+      return;
+    }
 
-        return;
-      }
-
-      reset();
-      router.push('/');
-    }),
-    []
-  );
+    reset();
+    router.push('/');
+  });
 
   return (
     <Form {...form}>
@@ -112,7 +107,7 @@ export default function LoginForm() {
 
           <div className="text-sm">
             <span className="text-muted-foreground">
-              Don't have an account?
+              Don&apos;t have an account?
             </span>{' '}
             <Link href="/auth/register">
               <span className="underline-offset-4 hover:underline">

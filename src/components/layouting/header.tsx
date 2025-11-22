@@ -2,7 +2,6 @@
 
 import { logout } from '@/actions/auth';
 import { Button } from '../ui/button';
-import { useCallback } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { LogoutIcon } from '../icons';
 import { usePathname } from 'next/navigation';
@@ -14,9 +13,9 @@ interface HeaderProps {
 export function Header({ displayName }: HeaderProps) {
   const pathname = usePathname();
 
-  const handleLogout = useCallback(async () => {
+  const handleLogout = async () => {
     await logout();
-  }, []);
+  };
 
   if (pathname === '/quiz') {
     return;

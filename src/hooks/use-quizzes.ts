@@ -2,16 +2,16 @@ import { Quiz } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type UseQuizzesState = { quizzes: Quiz[] };
-type UseQuizzesActions = {
+type State = { quizzes: Quiz[] };
+type Actions = {
   getQuizNo: (no: number) => Quiz;
-  setQuizzes: (newQuizzes: UseQuizzesState['quizzes']) => void;
+  setQuizzes: (newQuizzes: State['quizzes']) => void;
   clearQuizzes: () => void;
   getCorrectAnswers: () => string[];
 };
-type UseQuizzesStore = UseQuizzesState & UseQuizzesActions;
+type Store = State & Actions;
 
-export const useQuizzesStore = create<UseQuizzesStore>()(
+export const useQuizzesStore = create<Store>()(
   persist(
     (set, get) => ({
       quizzes: [],
