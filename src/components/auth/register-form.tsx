@@ -12,8 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import { createClient } from '@/utils/supabase/client';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { RegisterSchema, TRegisterForm } from '@/schemas/auth-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
@@ -21,7 +20,8 @@ import { register } from '@/actions/auth';
 import { Spinner } from '../ui/spinner';
 
 const defaultValues: TRegisterForm = {
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
 };
@@ -45,10 +45,17 @@ export default function RegisterForm() {
 
   const onSubmit = useCallback(
     handleSubmit(async (data) => {
-      const user = await register(data);
+      const newData: TRegisterForm = {
+        email: data.email,
+        first_name: data.first_name.trim(),
+        last_name: data.last_name.trim(),
+        password: data.password,
+      }
+
+      const user = await register(newData);
 
       if (!user) {
-        setError('email', { message: 'Email is already used' });
+        setError('email', { message: 'Email has already used' });
 
         return;
       }
@@ -67,20 +74,28 @@ export default function RegisterForm() {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-6">
-          <div className="grid gap-2">
+          <div className="grid gap-6 md:grid-cols-2 md:gap-4">
             <FormField
               control={control}
-              name="name"
+              name="first_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      {...field}
-                      placeholder="John Doe"
-                      required
-                    />
+                    <Input type="text" {...field} placeholder="John" required />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="last_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" {...field} placeholder="Doe" required />
                   </FormControl>
                 </FormItem>
               )}
@@ -126,7 +141,11 @@ export default function RegisterForm() {
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <Button type="submit" className="w-full hover:cursor-pointer">
+          <Button
+            type="submit"
+            className="w-full hover:cursor-pointer"
+            disabled={isAuthorized}
+          >
             {!isSubmitting ? 'Sign Up' : <Spinner />}
           </Button>
 

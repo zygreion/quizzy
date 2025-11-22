@@ -1,5 +1,6 @@
-import { API_URL } from '@/config/config';
 import { QuizRequest, QuizResponse } from '@/types';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 function generateSearchParams(request: QuizRequest): string {
   let searchParams = '&encode=url3986';

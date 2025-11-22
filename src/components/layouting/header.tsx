@@ -8,13 +8,11 @@ import { LogoutIcon } from '../icons';
 import { usePathname } from 'next/navigation';
 
 interface HeaderProps {
-  email: string;
+  displayName: string;
 }
 
-export function Header({ email }: HeaderProps) {
+export function Header({ displayName }: HeaderProps) {
   const pathname = usePathname();
-
-  const truncatedEmail = email.slice(0, email.indexOf('@'));
 
   const handleLogout = useCallback(async () => {
     await logout();
@@ -31,7 +29,7 @@ export function Header({ email }: HeaderProps) {
           <AvatarImage src="/shadcn-avatar.jpg" alt="@shadcn" />
           <AvatarFallback>PP</AvatarFallback>
         </Avatar>
-        <p>@{truncatedEmail}</p>
+        <span>{displayName}</span>
       </div>
       <Button
         variant="destructive"
