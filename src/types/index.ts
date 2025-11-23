@@ -38,3 +38,12 @@ export interface QuizResponse {
   response_code?: keyof typeof ResponseCodeMessages;
   results: Quiz[];
 }
+
+export interface User {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  display_name: string;
+  avatar_url?: string;
+}

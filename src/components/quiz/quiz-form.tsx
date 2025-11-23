@@ -14,15 +14,14 @@ import { Input } from '../ui/input';
 import { quizDifficulties, QuizRequest, ResponseCodeMessages } from '@/types';
 import { getQuizzes } from '@/lib/queries';
 import { Button } from '../ui/button';
-import { useEffect, useState } from 'react';
 import { upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Spinner } from '../ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { usePreferenceStore } from '@/hooks/use-preference';
-import { useQuizzesStore } from '@/hooks/use-quizzes';
-import { useQuizProgressStore } from '@/hooks/use-quiz-progress';
+import { usePreferenceStore } from '@/providers/preference-provider';
+import { useQuizzesStore } from '@/providers/quizzes-provider';
+import { useProgressStore } from '@/providers/progress-provider';
 
 const defaultValues: QuizRequest = {
   amount: 5,
@@ -39,7 +38,7 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
     string,
   ][]) {
     if (
-      (key !== 'type' && key === 'category' && Number(value) === -1) ||
+      (key === 'category' && Number(value) === -1) ||
       ((key === 'difficulty' || key === 'type') && value === 'any')
     ) {
       newData[key] = undefined;
@@ -50,29 +49,22 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
 }
 
 export default function QuizForm() {
-  const { getPreference, setPreference } = usePreferenceStore();
-  const { setQuizzes } = useQuizzesStore();
-  const [mounted, setMounted] = useState(false);
-  const { clearAnswers, setFinished } = useQuizProgressStore();
-
-  useEffect(() => setMounted(true), []);
+  const { amount, category, difficulty, type, setPreference } =
+    usePreferenceStore((state) => state);
+  const { setQuizzes } = useQuizzesStore((state) => state);
+  const { clearAnswers, setEnded } = useProgressStore((state) => state);
 
   const router = useRouter();
   const form = useForm<QuizRequest>({
-    defaultValues,
+    defaultValues: { amount, category, difficulty, type },
   });
 
   const {
     handleSubmit,
     control,
-    reset,
     setError,
     formState: { isSubmitting, errors },
   } = form;
-
-  useEffect(() => {
-    reset(getPreference());
-  }, [getPreference, mounted, reset]);
 
   const onSubmit = handleSubmit(async (data: QuizRequest) => {
     const clearedData = clearAnyValues(data);
@@ -88,7 +80,7 @@ export default function QuizForm() {
     }
 
     clearAnswers();
-    setFinished(false);
+    setEnded(false);
     setQuizzes(quizzes);
     setPreference({
       ...data,

@@ -4,6 +4,10 @@ import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import React from 'react';
 
+import { QuizzesStoreProvider } from '@/providers/quizzes-provider';
+import { ProgressStoreProvider } from '@/providers/progress-provider';
+import { PreferenceStoreProvider } from '@/providers/preference-provider';
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -20,7 +24,6 @@ export const metadata: Metadata = {
   authors: [{ name: "Mu'izzy", url: 'https://github.com/zygreion' }],
   creator: "Mu'izzy",
   keywords: ['quiz', 'quizzy', 'quiz game', 'quiz app', 'quiz app game'],
-
 };
 
 interface RootLayoutProps {
@@ -39,7 +42,11 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <QuizzesStoreProvider>
+            <ProgressStoreProvider>
+              <PreferenceStoreProvider>{children}</PreferenceStoreProvider>
+            </ProgressStoreProvider>
+          </QuizzesStoreProvider>
         </ThemeProvider>
       </body>
     </html>

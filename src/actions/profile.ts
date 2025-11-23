@@ -1,18 +1,9 @@
-'use server';
+import { User } from '@/types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
-import { createClient } from '@/utils/supabase/server';
-
-interface TUser {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  display_name: string;
-}
-
-export async function getUser() {
-  const supabase = await createClient();
-
+export async function getUserBase(
+  supabase: SupabaseClient<any, 'public', 'public', any, any>
+) {
   try {
     const { data, error: claimsError } = await supabase.auth.getClaims();
 
@@ -34,13 +25,7 @@ export async function getUser() {
       throw new Error(userError.message);
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      display_name: user.display_name,
-    } as TUser;
+    return user as User;
   } catch (error) {
     console.error(error);
     return null;

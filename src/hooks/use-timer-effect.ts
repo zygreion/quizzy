@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
-import { useTimerStore } from './use-timer-store';
+import { useProgressStore } from '@/providers/progress-provider';
 
 export function useTimerEffect() {
-  const { timer, running, setTimer, clearTimer: resetTimer } = useTimerStore();
+  const { timer, running, setTimer, resetTimer } = useProgressStore(
+    (state) => state
+  );
 
   useEffect(() => {
     if (!running) return;

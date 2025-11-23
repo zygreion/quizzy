@@ -4,18 +4,40 @@ import { logout } from '@/actions/auth';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { LogoutIcon } from '../icons';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { getUserClient } from '@/actions/profile-client';
+import { User } from '@/types/index';
 
-interface HeaderProps {
-  displayName: string;
-}
-
-export function Header({ displayName }: HeaderProps) {
+export function Header() {
+  const router = useRouter();
   const pathname = usePathname();
+  const [headerInfo, setHeaderInfo] = useState<
+    Pick<User, 'display_name' | 'avatar_url'>
+  >({
+    display_name: '',
+    avatar_url: '',
+  });
 
-  const handleLogout = async () => {
-    await logout();
-  };
+  // const handleLogout = async () => {
+  //   await logout();
+  //   router.push('/auth/login');
+  // };
+
+  useEffect(() => {
+    const getUserClientFn = async () => {
+      const user = await getUserClient();
+
+      if (!user) return;
+
+      setHeaderInfo({
+        display_name: user.display_name,
+        avatar_url: user.avatar_url,
+      });
+    };
+
+    getUserClientFn();
+  }, []);
 
   if (pathname === '/quiz') {
     return;
@@ -25,20 +47,23 @@ export function Header({ displayName }: HeaderProps) {
     <div className="flex w-full items-center justify-between gap-4 py-4">
       <div className="flex items-center gap-3">
         <Avatar>
-          <AvatarImage src="/shadcn-avatar.jpg" alt="@shadcn" />
-          <AvatarFallback>PP</AvatarFallback>
+          <AvatarImage src={headerInfo.avatar_url} alt="PP" />
+          <AvatarFallback></AvatarFallback>
         </Avatar>
-        <span>{displayName}</span>
+        <span>{headerInfo.display_name}</span>
       </div>
-      <Button
-        variant="destructive"
-        size="sm"
-        onClick={handleLogout}
-        className="flex items-center gap-2 hover:cursor-pointer"
-      >
-        <span className="leading-0">Logout </span>
-        <LogoutIcon />
-      </Button>
+      <form action={logout}>
+        <Button
+          variant="destructive"
+          size="sm"
+          // onClick={handleLogout}
+          className="flex items-center gap-2 hover:cursor-pointer"
+          type="submit"
+        >
+          <span className="leading-0">Logout </span>
+          <LogoutIcon />
+        </Button>
+      </form>
     </div>
   );
 }

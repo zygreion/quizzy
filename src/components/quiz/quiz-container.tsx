@@ -8,10 +8,10 @@ import { useMemo } from 'react';
 
 interface QuizContainerProps {
   quiz: Quiz;
-  onSelect: (s: string) => void;
+  onAnswer: (answer: string) => void;
 }
 
-export default function QuizContainer({ quiz, onSelect }: QuizContainerProps) {
+export default function QuizContainer({ quiz, onAnswer }: QuizContainerProps) {
   const { type, question, correct_answer, incorrect_answers } = quiz;
 
   const shuffledAnswers = useMemo(
@@ -29,7 +29,7 @@ export default function QuizContainer({ quiz, onSelect }: QuizContainerProps) {
 
       <ToggleGroup
         type="single"
-        onValueChange={onSelect}
+        onValueChange={onAnswer}
         variant="outline"
         className="grid w-full grid-cols-2 gap-2"
         spacing={1}

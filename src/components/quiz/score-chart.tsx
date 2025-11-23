@@ -21,10 +21,9 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { quizCategories } from '@/lib/data';
 import { upperFirstChar } from '@/lib/utils';
-import { useQuizProgressStore } from '@/hooks/use-quiz-progress';
-import { useQuizzesStore } from '@/hooks/use-quizzes';
-import { useTimerStore } from '@/hooks/use-timer-store';
-import { usePreferenceStore } from '@/hooks/use-preference';
+import { useQuizzesStore } from '@/providers/quizzes-provider';
+import { useProgressStore } from '@/providers/progress-provider';
+import { usePreferenceStore } from '@/providers/preference-provider';
 import { notFound } from 'next/navigation';
 
 const chartConfig = {
@@ -43,31 +42,32 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ScoreChart() {
-  const { getPreference } = usePreferenceStore();
-  const { quizzes, clearQuizzes } = useQuizzesStore();
-  const { userAnswers, setFinished, clearAnswers } = useQuizProgressStore();
-  const { clearTimer } = useTimerStore();
+  const { difficulty, category } = usePreferenceStore((state) => state);
+  const { quizzes, clearQuizzes } = useQuizzesStore((state) => state);
+  const { answers, setEnded, clearAnswers, resetTimer } = useProgressStore(
+    (state) => state
+  );
 
   const { totalCorrect, totalIncorrect, totalUnanswered } =
     React.useMemo(() => {
-      const totalCorrect = userAnswers.filter(
+      const totalCorrect = answers.filter(
         (ans, i) => ans === quizzes[i].correct_answer
       ).length;
-      const totalIncorrect = userAnswers.length - totalCorrect;
-      const totalUnanswered = quizzes.length - userAnswers.length;
+      const totalIncorrect = answers.length - totalCorrect;
+      const totalUnanswered = quizzes.length - answers.length;
 
       return {
         totalCorrect,
         totalIncorrect,
         totalUnanswered,
       };
-    }, [quizzes, userAnswers]);
+    }, [quizzes, answers]);
 
   React.useEffect(() => {
     if (quizzes.length < 1) return notFound();
 
-    setFinished(true);
-  }, [quizzes.length, setFinished]);
+    setEnded(true);
+  }, [quizzes.length, setEnded]);
 
   const { chartData, categoryDisplay, difficultyDisplay } =
     React.useMemo(() => {
@@ -85,8 +85,6 @@ export function ScoreChart() {
         },
       ];
 
-      const { category, difficulty } = getPreference();
-
       const categoryDisplay = category
         ? quizCategories.find((cat) => cat.id === category)?.name
         : 'Unknown Category';
@@ -102,15 +100,15 @@ export function ScoreChart() {
         categoryDisplay,
         difficultyDisplay,
       };
-    }, [getPreference, totalCorrect, totalIncorrect, totalUnanswered]);
+    }, [category, difficulty, totalCorrect, totalIncorrect, totalUnanswered]);
 
   const clearData = React.useCallback(() => {
     setTimeout(() => {
       clearQuizzes();
       clearAnswers();
-      clearTimer();
+      resetTimer();
     }, 2000);
-  }, [clearAnswers, clearQuizzes, clearTimer]);
+  }, [clearAnswers, clearQuizzes, resetTimer]);
 
   return (
     <Card className="flex flex-col">
