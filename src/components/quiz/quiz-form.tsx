@@ -19,9 +19,7 @@ import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Spinner } from '../ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { usePreferenceStore } from '@/providers/preference-provider';
-import { useQuizzesStore } from '@/providers/quizzes-provider';
-import { useProgressStore } from '@/providers/progress-provider';
+import { useQuizzesStore, useProgressStore, usePreferenceStore } from '@/providers/zustand-providers';
 
 const defaultValues: QuizRequest = {
   amount: 5,

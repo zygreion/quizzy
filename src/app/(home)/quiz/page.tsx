@@ -3,9 +3,11 @@
 import { useCallback, useEffect } from 'react';
 import QuizContainer from '@/components/quiz/quiz-container';
 import { notFound, useRouter } from 'next/navigation';
-import { useProgressStore } from '@/providers/progress-provider';
 import { useTimerEffect } from '@/hooks/use-timer-effect';
-import { useQuizzesStore } from '@/providers/quizzes-provider';
+import {
+  useProgressStore,
+  useQuizzesStore,
+} from '@/providers/zustand-providers';
 import { cn } from '@/lib/utils';
 
 export default function QuizPage() {
@@ -22,7 +24,7 @@ export default function QuizPage() {
     startTimer,
     setRunning,
   } = useProgressStore((state) => state);
-  
+
   useTimerEffect();
 
   const router = useRouter();
