@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "format": "prettier --write ."
+    "format": "prettier '**/*.{js,jsx,ts,tsx}' --write"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
