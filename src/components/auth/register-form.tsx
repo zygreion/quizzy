@@ -61,7 +61,7 @@ export default function RegisterForm() {
 
     setIsAuthorized(true);
     reset();
-    router.push('/auth/login');
+    router.refresh();
   });
 
   return (

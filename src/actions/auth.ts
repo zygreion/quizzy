@@ -2,21 +2,18 @@
 
 import { withErrorHandling } from '@/lib/error-helper';
 import { TLoginForm, TRegisterForm } from '@/schemas/auth-schema';
-import { createClient } from '@/utils/supabase/server';
-import { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export async function login(loginData: TLoginForm) {
   const supabase = await createClient();
 
-  return await withErrorHandling(
-    async () => {
-      const { data, error } = await supabase.auth.signInWithPassword(loginData);
-      if (error) throw new Error(error.message);
+  return await withErrorHandling(async () => {
+    const { data, error } = await supabase.auth.signInWithPassword(loginData);
+    if (error) throw new Error(error.message);
 
-      return data.user;
-    },
-  );
+    return data.user;
+  });
 }
 
 export async function register(registerData: TRegisterForm) {
@@ -47,7 +44,7 @@ export async function logout() {
 
   return await withErrorHandling(
     async () => {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
       if (error) throw new Error(error.message);
     },
     { finallyFn: () => redirect('/') }

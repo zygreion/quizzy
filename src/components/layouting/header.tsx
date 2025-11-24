@@ -10,7 +10,6 @@ import { getUserClient } from '@/actions/profile-client';
 import { User } from '@/types/index';
 
 export function Header() {
-  const router = useRouter();
   const pathname = usePathname();
   const [headerInfo, setHeaderInfo] = useState<
     Pick<User, 'display_name' | 'avatar_url'>
@@ -18,11 +17,6 @@ export function Header() {
     display_name: '',
     avatar_url: '',
   });
-
-  // const handleLogout = async () => {
-  //   await logout();
-  //   router.push('/auth/login');
-  // };
 
   useEffect(() => {
     const getUserClientFn = async () => {
@@ -47,8 +41,16 @@ export function Header() {
     <div className="flex w-full items-center justify-between gap-4 py-4">
       <div className="flex items-center gap-3">
         <Avatar>
-          <AvatarImage src={headerInfo.avatar_url} alt="PP" />
-          <AvatarFallback></AvatarFallback>
+          <AvatarImage
+            src={
+              headerInfo.avatar_url ??
+              `https://placehold.co/50x50?text=${headerInfo.display_name.charAt(0).toUpperCase()}`
+            }
+            alt=""
+          />
+          <AvatarFallback>
+            {/* {headerInfo.display_name.charAt(0).toUpperCase()} */}
+          </AvatarFallback>
         </Avatar>
         <span>{headerInfo.display_name}</span>
       </div>

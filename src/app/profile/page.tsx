@@ -20,7 +20,7 @@ export default async function ProfilePage() {
         <Input type="text" defaultValue={profile.id} disabled />
         <Input type="text" defaultValue={profile.email} disabled />
 
-        <div className="grid sm:grid-cols-2 sm:gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <Input type="text" defaultValue={profile.first_name} />
           <Input type="text" defaultValue={profile.last_name} />
         </div>
