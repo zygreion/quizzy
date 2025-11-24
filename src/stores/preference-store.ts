@@ -22,6 +22,7 @@ export const createPreferenceStore = (
 ) => {
   return createStore<PreferenceStore>()(
     persist(
+      // eslint-disable-next-line unused-imports/no-unused-vars
       (set, get) => ({
         ...initState,
 

@@ -4,7 +4,7 @@ import { logout } from '@/actions/auth';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { LogoutIcon } from '../icons';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getUserClient } from '@/actions/profile-client';
 import { User } from '@/types/index';

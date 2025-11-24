@@ -21,13 +21,6 @@ import { Spinner } from '../ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { useQuizzesStore, useProgressStore, usePreferenceStore } from '@/providers/zustand-providers';
 
-const defaultValues: QuizRequest = {
-  amount: 5,
-  category: -1,
-  type: 'any',
-  difficulty: 'any',
-};
-
 function clearAnyValues(data: QuizRequest): QuizRequest {
   const newData = { ...data };
 
