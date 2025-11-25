@@ -19,7 +19,9 @@ import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Spinner } from '../ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { useQuizzesStore, useProgressStore, usePreferenceStore } from '@/providers/zustand-providers';
+import { useQuizzesStore } from '@/hooks/use-quizzes-store';
+import { useProgressStore } from '@/hooks/use-progress-store';
+import { usePreferenceStore } from '@/hooks/use-preference-store';
 
 function clearAnyValues(data: QuizRequest): QuizRequest {
   const newData = { ...data };

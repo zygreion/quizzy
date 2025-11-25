@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useProgressStore } from '@/providers/zustand-providers';
+import { useProgressStore } from './use-progress-store';
 
 export function useTimerEffect() {
   const { timer, running, setTimer, resetTimer } = useProgressStore(

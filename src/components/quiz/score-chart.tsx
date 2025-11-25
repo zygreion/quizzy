@@ -21,7 +21,9 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { quizCategories } from '@/lib/data';
 import { upperFirstChar } from '@/lib/utils';
-import { useQuizzesStore, useProgressStore, usePreferenceStore } from '@/providers/zustand-providers';
+import { useQuizzesStore } from '@/hooks/use-quizzes-store';
+import { useProgressStore } from '@/hooks/use-progress-store';
+import { usePreferenceStore } from '@/hooks/use-preference-store';
 import { notFound } from 'next/navigation';
 
 const chartConfig = {

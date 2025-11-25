@@ -4,10 +4,8 @@ import { useCallback, useEffect } from 'react';
 import QuizContainer from '@/components/quiz/quiz-container';
 import { notFound, useRouter } from 'next/navigation';
 import { useTimerEffect } from '@/hooks/use-timer-effect';
-import {
-  useProgressStore,
-  useQuizzesStore,
-} from '@/providers/zustand-providers';
+import { useQuizzesStore } from '@/hooks/use-quizzes-store';
+import { useProgressStore } from '@/hooks/use-progress-store';
 import { cn } from '@/lib/utils';
 
 export default function QuizPage() {

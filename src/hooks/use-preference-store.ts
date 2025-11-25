@@ -1,6 +1,7 @@
 import { createStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { QuizRequest } from '@/types';
+import { createStoreProvider } from '@/providers/create-store-provider';
 
 type PreferenceState = QuizRequest;
 
@@ -8,7 +9,7 @@ type PreferenceActions = {
   setPreference: (newPreference: PreferenceState) => void;
 };
 
-export type PreferenceStore = PreferenceState & PreferenceActions;
+type PreferenceStore = PreferenceState & PreferenceActions;
 
 const defaultInitState: PreferenceState = {
   amount: 20,
@@ -17,7 +18,7 @@ const defaultInitState: PreferenceState = {
   type: 'any',
 };
 
-export const createPreferenceStore = (
+const createPreferenceStore = (
   initState: PreferenceState = defaultInitState
 ) => {
   return createStore<PreferenceStore>()(
@@ -32,3 +33,9 @@ export const createPreferenceStore = (
     )
   );
 };
+
+// prettier-ignore
+export const {  
+  Provider: PreferenceStoreProvider,
+  useStore: usePreferenceStore,
+} = createStoreProvider<PreferenceStore>(createPreferenceStore, 'PreferenceStore');

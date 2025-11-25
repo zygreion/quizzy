@@ -1,3 +1,4 @@
+import { createStoreProvider } from '@/providers/create-store-provider';
 import { createStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -22,7 +23,7 @@ type ProgressActions = {
   setEnded: (value: ProgressState['ended']) => void;
 };
 
-export type ProgressStore = ProgressState & ProgressActions;
+type ProgressStore = ProgressState & ProgressActions;
 
 const defaultInitState: ProgressState = {
   answers: [],
@@ -32,9 +33,7 @@ const defaultInitState: ProgressState = {
   running: false,
 };
 
-export const createProgressStore = (
-  initState: ProgressState = defaultInitState
-) => {
+const createProgressStore = (initState: ProgressState = defaultInitState) => {
   return createStore<ProgressStore>()(
     persist(
       (set, get) => ({
@@ -55,3 +54,9 @@ export const createProgressStore = (
     )
   );
 };
+
+// prettier-ignore
+export const { 
+  Provider: ProgressStoreProvider, 
+  useStore: useProgressStore 
+} = createStoreProvider<ProgressStore>(createProgressStore, 'ProgressStore');

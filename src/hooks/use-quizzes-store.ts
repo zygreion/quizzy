@@ -1,6 +1,7 @@
 import { createStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Quiz } from '@/types';
+import { createStoreProvider } from '@/providers/create-store-provider';
 
 type QuizzesState = { quizzes: Quiz[] };
 
@@ -11,15 +12,13 @@ type QuizzesActions = {
   getCorrectAnswers: () => string[];
 };
 
-export type QuizzesStore = QuizzesState & QuizzesActions;
+type QuizzesStore = QuizzesState & QuizzesActions;
 
 const defaultInitState: QuizzesState = {
   quizzes: [],
 };
 
-export const createQuizzesStore = (
-  initState: QuizzesState = defaultInitState
-) => {
+const createQuizzesStore = (initState: QuizzesState = defaultInitState) => {
   return createStore<QuizzesStore>()(
     persist(
       (set, get) => ({
@@ -34,3 +33,9 @@ export const createQuizzesStore = (
     )
   );
 };
+
+// prettier-ignore
+export const {
+  Provider: QuizzesStoreProvider,
+  useStore: useQuizzesStore,
+} = createStoreProvider<QuizzesStore>(createQuizzesStore, 'QuizzesStore');
