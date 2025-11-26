@@ -4,9 +4,7 @@ import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import React from 'react';
 
-import {
-  ZustandProviders,
-} from '@/providers/zustand-providers';
+import { ZustandProviders } from '@/providers/zustand-providers';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

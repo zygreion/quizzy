@@ -1,13 +1,13 @@
-import { twMerge } from 'tailwind-merge';
+import { cn } from '@/lib/utils';
 
 interface IconProps {
   className?: string;
 }
 
-export function LogoutIcon({ className }: IconProps) {
+function LogoutIcon({ className }: IconProps) {
   return (
     <svg
-      className={twMerge('h-6 w-6 text-gray-800 dark:text-white', className)}
+      className={cn('h-6 w-6 text-current', className)}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -25,3 +25,5 @@ export function LogoutIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export { LogoutIcon };

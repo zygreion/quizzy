@@ -1,10 +1,8 @@
 import { getUserServer } from '@/actions/profile-server';
 import { CopyableInput } from '@/components/copyable-input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function ProfilePage() {
@@ -58,10 +56,6 @@ export default async function ProfilePage() {
             defaultValue={profile.display_name}
           />
         </div>
-
-        <Button asChild>
-          <Link href="/">Home</Link>
-        </Button>
       </div>
 
       <CopyableInput type="number" value="20" />
