@@ -29,3 +29,12 @@ export function shuffleQuizAnswers(type: Quiz['type'], answers: string[]) {
 
   return shuffled;
 }
+
+// Typed Entries
+type Entries<T extends object> = {
+  [K in keyof T]-?: [K, T[K]];
+}[keyof T][];
+
+export function typedEntries<T extends object>(obj: T): Entries<T> {
+  return Object.entries(obj) as Entries<T>;
+}

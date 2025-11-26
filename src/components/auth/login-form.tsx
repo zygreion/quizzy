@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { login } from '@/actions/auth';
 import { Spinner } from '../ui/spinner';
 import { LoginSchema, TLoginForm } from '@/schemas/auth-schema';
+import { useAccountStore } from '@/hooks/use-account-store';
 
 const defaultValues: TLoginForm = {
   email: '',
@@ -18,6 +19,7 @@ const defaultValues: TLoginForm = {
 
 export default function LoginForm() {
   const router = useRouter();
+  const { setUser, setPreference } = useAccountStore((state) => state);
   const form = useForm<TLoginForm>({
     resolver: zodResolver(LoginSchema),
     defaultValues,
@@ -32,15 +34,20 @@ export default function LoginForm() {
   } = form;
 
   const onSubmit = handleSubmit(async (data) => {
-    const user = await login(data);
+    const { preference, ...user } = await login(data);
 
     if (!user) {
       setError('root', { message: 'Invalid email or password' });
       return;
     }
 
+    if (preference) {
+      setPreference(preference);
+    }
+
+    setUser(user);
     reset();
-    router.refresh();
+    router.push('/home');
   });
 
   return (

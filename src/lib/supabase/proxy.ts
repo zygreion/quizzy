@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+const publicRoutes = ['/'];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -37,18 +39,23 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
 
   const user = data?.claims;
+  const { pathname } = request.nextUrl;
 
-  if (!user && !request.nextUrl.pathname.startsWith('/auth')) {
+  if (
+    !user &&
+    !pathname.startsWith('/auth') &&
+    !publicRoutes.includes(pathname)
+  ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = '/auth/login';
     return NextResponse.redirect(url);
   }
 
-  if (user && request.nextUrl.pathname.startsWith('/auth')) {
+  if (user && pathname.startsWith('/auth')) {
     // user is signed in, potentially respond by redirecting the user to the home page
     const url = request.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = '/home';
     return NextResponse.redirect(url);
   }
 

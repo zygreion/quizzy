@@ -23,7 +23,7 @@ import { quizCategories } from '@/lib/data';
 import { upperFirstChar } from '@/lib/utils';
 import { useQuizzesStore } from '@/hooks/use-quizzes-store';
 import { useProgressStore } from '@/hooks/use-progress-store';
-import { usePreferenceStore } from '@/hooks/use-preference-store';
+import { useAccountStore } from '@/hooks/use-account-store';
 import { notFound } from 'next/navigation';
 
 const chartConfig = {
@@ -42,7 +42,9 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ScoreChart() {
-  const { difficulty, category } = usePreferenceStore((state) => state);
+  const {
+    preference: { difficulty, category },
+  } = useAccountStore((state) => state);
   const { quizzes, clearQuizzes } = useQuizzesStore((state) => state);
   const { answers, setEnded, clearAnswers, resetTimer } = useProgressStore(
     (state) => state
@@ -85,9 +87,7 @@ export function ScoreChart() {
         },
       ];
 
-      const categoryDisplay = category
-        ? quizCategories.find((cat) => cat.id === category)?.name
-        : 'Unknown Category';
+      const categoryDisplay = quizCategories.find((cat) => cat.id === category)?.name ?? 'Unknown Category'
 
       const difficultyDisplay = difficulty
         ? difficulty !== 'any'
@@ -103,11 +103,13 @@ export function ScoreChart() {
     }, [category, difficulty, totalCorrect, totalIncorrect, totalUnanswered]);
 
   const clearData = React.useCallback(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       clearQuizzes();
       clearAnswers();
       resetTimer();
     }, 2000);
+    
+    return () => clearTimeout(timeout);
   }, [clearAnswers, clearQuizzes, resetTimer]);
 
   return (
@@ -180,7 +182,7 @@ export function ScoreChart() {
         </div>
 
         <Button asChild className="mt-4" onClick={clearData}>
-          <Link href="/">Generate More Quiz</Link>
+          <Link href="/home">Generate More Quiz</Link>
         </Button>
       </CardFooter>
     </Card>

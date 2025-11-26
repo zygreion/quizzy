@@ -3,7 +3,7 @@
 import { withErrorHandling } from '@/lib/error-helper';
 import { TLoginForm, TRegisterForm } from '@/schemas/auth-schema';
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { Account } from '@/types';
 
 export async function login(loginData: TLoginForm) {
   const supabase = await createClient();
@@ -12,7 +12,23 @@ export async function login(loginData: TLoginForm) {
     const { data, error } = await supabase.auth.signInWithPassword(loginData);
     if (error) throw new Error(error.message);
 
-    return data.user;
+    // Get user personal info + preference
+    const { data: account, error: accountError } = await supabase
+      .from('users')
+      .select(
+        `
+        *,
+        preference:user_preference(amount, category:category_id, difficulty, type)
+        `
+      )
+      .eq('id', data.user.id)
+      .single();
+
+    if (accountError) {
+      throw new Error(accountError.message);
+    }
+
+    return account as Account;
   });
 }
 
@@ -42,11 +58,9 @@ export async function register(registerData: TRegisterForm) {
 export async function logout() {
   const supabase = await createClient();
 
-  return await withErrorHandling(
-    async () => {
-      const { error } = await supabase.auth.signOut({ scope: 'local' });
-      if (error) throw new Error(error.message);
-    },
-    { finallyFn: () => redirect('/') }
-  );
+  return await withErrorHandling(async () => {
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    // if (error) throw new Error(error.message);
+    return error;
+  });
 }

@@ -47,7 +47,7 @@ export default function QuizPage() {
 
   useEffect(() => {
     if ((!ended && running && timer <= 0) || currentNo >= quizzes.length) {
-      router.push('/quiz/result');
+      router.push('/home/quiz/result');
     }
   }, [timer, currentNo, quizzes, router, running, setRunning, ended]);
 

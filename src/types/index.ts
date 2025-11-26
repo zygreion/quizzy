@@ -25,6 +25,8 @@ export interface QuizRequest {
   type?: QuizType;
 }
 
+export interface Preference extends QuizRequest {}
+
 export const ResponseCodeMessages = {
   0: 'Success',
   1: 'No Results',
@@ -46,4 +48,8 @@ export interface User {
   last_name: string;
   display_name: string;
   avatar_url?: string;
+}
+
+export interface Account extends User {
+  preference: Preference;
 }

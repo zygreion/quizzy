@@ -11,25 +11,23 @@ import {
 } from '@/components/ui/select';
 import { quizCategories } from '@/lib/data';
 import { Input } from '../ui/input';
-import { quizDifficulties, QuizRequest, ResponseCodeMessages } from '@/types';
+import { quizDifficulties, Preference, ResponseCodeMessages } from '@/types';
 import { getQuizzes } from '@/lib/queries';
 import { Button } from '../ui/button';
-import { upperFirstChar } from '@/lib/utils';
+import { typedEntries, upperFirstChar } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 import { Spinner } from '../ui/spinner';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { useQuizzesStore } from '@/hooks/use-quizzes-store';
 import { useProgressStore } from '@/hooks/use-progress-store';
-import { usePreferenceStore } from '@/hooks/use-preference-store';
+import { useAccountStore } from '@/hooks/use-account-store';
+import { updatePreference } from '@/actions/quiz';
 
-function clearAnyValues(data: QuizRequest): QuizRequest {
+function clearAnyValues(data: Preference): Preference {
   const newData = { ...data };
 
-  for (const [key, value] of Object.entries(newData) as [
-    keyof QuizRequest,
-    string,
-  ][]) {
+  for (const [key, value] of typedEntries(data)) {
     if (
       (key === 'category' && Number(value) === -1) ||
       ((key === 'difficulty' || key === 'type') && value === 'any')
@@ -42,13 +40,15 @@ function clearAnyValues(data: QuizRequest): QuizRequest {
 }
 
 export default function QuizForm() {
-  const { amount, category, difficulty, type, setPreference } =
-    usePreferenceStore((state) => state);
+  const {
+    preference: { amount, category, difficulty, type },
+    setPreference,
+  } = useAccountStore((state) => state);
   const { setQuizzes } = useQuizzesStore((state) => state);
   const { clearAnswers, setEnded } = useProgressStore((state) => state);
 
   const router = useRouter();
-  const form = useForm<QuizRequest>({
+  const form = useForm<Preference>({
     defaultValues: { amount, category, difficulty, type },
   });
 
@@ -59,9 +59,14 @@ export default function QuizForm() {
     formState: { isSubmitting, errors },
   } = form;
 
-  const onSubmit = handleSubmit(async (data: QuizRequest) => {
-    const clearedData = clearAnyValues(data);
-    const { response_code, results: quizzes } = await getQuizzes(clearedData);
+  const onSubmit = handleSubmit(async (rawData: Preference) => {
+    const newData = clearAnyValues({
+      ...rawData,
+      amount: Number(rawData.amount),
+      category: Number(rawData.category),
+    });
+
+    const { response_code, results: quizzes } = await getQuizzes(newData);
 
     if (response_code !== undefined && response_code !== 0) {
       const errorMessage = ResponseCodeMessages[response_code];
@@ -75,13 +80,16 @@ export default function QuizForm() {
     clearAnswers();
     setEnded(false);
     setQuizzes(quizzes);
-    setPreference({
-      ...data,
-      amount: Number(data.amount),
-      category: Number(data.category),
+    setPreference(newData);
+
+    await updatePreference({
+      type: newData.type,
+      difficulty: newData.difficulty,
+      amount: newData.amount,
+      category_id: Number(newData.category),
     });
 
-    router.push('/quiz');
+    router.push('/home/quiz');
   });
 
   return (

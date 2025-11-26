@@ -5,11 +5,11 @@ export const quizCategories: QuizCategory[] = [
     id: -1,
     name: 'Any Category',
   },
+  {
+    id: 9,
+    name: 'General Knowledge',
+  },
   ...[
-    {
-      id: 9,
-      name: 'General Knowledge',
-    },
     {
       id: 10,
       name: 'Entertainment: Books',
