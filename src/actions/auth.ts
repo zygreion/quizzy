@@ -17,7 +17,7 @@ export async function login(loginData: TLoginForm) {
       .select(
         `
         *,
-        preference:user_preference(amount, category:category_id, difficulty, type)
+        preference:user_preference(amount, category_id, difficulty, type)
         `
       )
       .eq('id', data.user.id)
@@ -28,8 +28,7 @@ export async function login(loginData: TLoginForm) {
     }
 
     return account as Account;
-  } 
-  catch (err) {
+  } catch (err) {
     console.error(err);
     return null;
   }

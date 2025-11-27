@@ -29,7 +29,7 @@ function clearAnyValues(data: Preference): Preference {
 
   for (const [key, value] of typedEntries(data)) {
     if (
-      (key === 'category' && Number(value) === -1) ||
+      (key === 'category_id' && value === 0) ||
       ((key === 'difficulty' || key === 'type') && value === 'any')
     ) {
       newData[key] = undefined;
@@ -41,7 +41,7 @@ function clearAnyValues(data: Preference): Preference {
 
 export default function QuizForm() {
   const {
-    preference: { amount, category, difficulty, type },
+    preference: { amount, category_id, difficulty, type },
     setPreference,
   } = useAccountStore((state) => state);
   const { setQuizzes } = useQuizzesStore((state) => state);
@@ -49,7 +49,7 @@ export default function QuizForm() {
 
   const router = useRouter();
   const form = useForm<Preference>({
-    defaultValues: { amount, category, difficulty, type },
+    defaultValues: { amount, category_id, difficulty, type },
   });
 
   const {
@@ -60,13 +60,14 @@ export default function QuizForm() {
   } = form;
 
   const onSubmit = handleSubmit(async (rawData: Preference) => {
-    const newData = clearAnyValues({
+    const mappedData = {
       ...rawData,
       amount: Number(rawData.amount),
-      category: Number(rawData.category),
-    });
+      category_id: Number(rawData.category_id),
+    };
 
-    const { response_code, results: quizzes } = await getQuizzes(newData);
+    const requestData = clearAnyValues(mappedData);
+    const { response_code, results: quizzes } = await getQuizzes(requestData);
 
     if (response_code !== undefined && response_code !== 0) {
       const errorMessage = ResponseCodeMessages[response_code];
@@ -74,19 +75,20 @@ export default function QuizForm() {
       setError('root', {
         message: `${errorMessage}: Please try another combination`,
       });
+
       return;
     }
 
     clearAnswers();
     setEnded(false);
     setQuizzes(quizzes);
-    setPreference(newData);
+    setPreference(mappedData);
 
     await updatePreference({
-      type: newData.type,
-      difficulty: newData.difficulty,
-      amount: newData.amount,
-      category_id: Number(newData.category),
+      type: mappedData.type,
+      difficulty: mappedData.difficulty,
+      amount: mappedData.amount,
+      category_id: Number(mappedData.category_id),
     });
 
     router.push('/home/quiz');
@@ -117,7 +119,7 @@ export default function QuizForm() {
 
         <FormField
           control={control}
-          name="category"
+          name="category_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>

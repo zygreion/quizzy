@@ -2,7 +2,7 @@ import { QuizCategory } from '@/types';
 
 export const quizCategories: QuizCategory[] = [
   {
-    id: -1,
+    id: 0,
     name: 'Any Category',
   },
   {

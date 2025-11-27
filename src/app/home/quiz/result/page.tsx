@@ -1,5 +1,3 @@
-'use client';
-
 import { ScoreChart } from '@/components/quiz/score-chart';
 
 export default function ResultPage() {

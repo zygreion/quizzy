@@ -43,7 +43,7 @@ const chartConfig = {
 
 export function ScoreChart() {
   const {
-    preference: { difficulty, category },
+    preference: { difficulty, category_id },
   } = useAccountStore((state) => state);
   const { quizzes, clearQuizzes } = useQuizzesStore((state) => state);
   const { answers, setEnded, clearAnswers, resetTimer } = useProgressStore(
@@ -87,7 +87,9 @@ export function ScoreChart() {
         },
       ];
 
-      const categoryDisplay = quizCategories.find((cat) => cat.id === category)?.name ?? 'Unknown Category'
+      const categoryDisplay =
+        quizCategories.find((cat) => cat.id === category_id)?.name ??
+        'Unknown Category';
 
       const difficultyDisplay = difficulty
         ? difficulty !== 'any'
@@ -100,7 +102,13 @@ export function ScoreChart() {
         categoryDisplay,
         difficultyDisplay,
       };
-    }, [category, difficulty, totalCorrect, totalIncorrect, totalUnanswered]);
+    }, [
+      category_id,
+      difficulty,
+      totalCorrect,
+      totalIncorrect,
+      totalUnanswered,
+    ]);
 
   const clearData = React.useCallback(() => {
     const timeout = setTimeout(() => {
@@ -108,7 +116,7 @@ export function ScoreChart() {
       clearAnswers();
       resetTimer();
     }, 2000);
-    
+
     return () => clearTimeout(timeout);
   }, [clearAnswers, clearQuizzes, resetTimer]);
 

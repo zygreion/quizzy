@@ -62,7 +62,7 @@ export default function QuizPage() {
         </p>
         <div className={cn(timer > 15 ? 'text-amber-100' : 'text-destructive')}>
           <span>Time Left: </span>
-          <span>{timer}s</span>
+          <span>{formatTimer(timer)}</span>
         </div>
       </div>
 
@@ -72,4 +72,18 @@ export default function QuizPage() {
       />
     </div>
   );
+}
+
+function formatTimer(sec: number) {
+  if (sec < 0) return '0s';
+
+  let res = '';
+
+  const minutes = Math.floor(sec / 60);
+  if (minutes > 0) res = `${minutes}m`;
+
+  const seconds = sec - minutes * 60;
+  res += ` ${seconds}s`;
+
+  return res.trimStart();
 }

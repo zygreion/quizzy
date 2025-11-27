@@ -1,23 +1,26 @@
-import { QuizRequest, QuizResponse } from '@/types';
+import { QuizRequest, QuizResponses } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
-function createSearchParams(request: QuizRequest): string {
-  const searchParams = new URLSearchParams({
-    encode: 'url3986',
-  });
+function createSearchParams<
+  T extends Record<string, string | number | boolean | undefined>,
+>(obj: T, mapper?: Partial<Record<keyof T, string>>): string {
+  const searchParams = new URLSearchParams();
 
-  for (const [key, value] of Object.entries(request)) {
-    if (value) {
-      searchParams.append(key, value);
-    }
+  for (const [key, value] of Object.entries(obj)) {
+    const newKey = (mapper && mapper[key]) || key;
+    if (value !== undefined) searchParams.append(newKey, value.toString());
   }
 
   return searchParams.toString();
 }
 
-export async function getQuizzes(request: QuizRequest): Promise<QuizResponse> {
-  const searchParams = createSearchParams(request);
+export async function getQuizzes(request: QuizRequest) {
+  const searchParams = createSearchParams(
+    { ...request, encode: 'url3986' },
+    { category_id: 'category' }
+  );
+  console.log(searchParams);
   const response = await fetch(`${API_URL}?${searchParams}`);
 
   if (!response.ok) {
@@ -25,5 +28,5 @@ export async function getQuizzes(request: QuizRequest): Promise<QuizResponse> {
   }
 
   const quizResponse = await response.json();
-  return quizResponse;
+  return quizResponse as QuizResponses;
 }

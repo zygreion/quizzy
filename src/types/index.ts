@@ -20,9 +20,10 @@ export const quizTypes = ['any', 'boolean', 'multiple'] as const;
 type QuizType = (typeof quizTypes)[number];
 
 export interface Quiz {
+  id: string;
   type: QuizType;
   difficulty: QuizDifficulty;
-  category: string;
+  category: QuizCategory['name'];
   question: string;
   correct_answer: string;
   incorrect_answers: string[];
@@ -30,7 +31,7 @@ export interface Quiz {
 
 export interface QuizRequest {
   amount: number;
-  category?: QuizCategory['id'];
+  category_id?: QuizCategory['id'];
   difficulty?: QuizDifficulty;
   type?: QuizType;
 }
@@ -46,7 +47,7 @@ export const ResponseCodeMessages = {
   5: 'ID Not Found',
 } as const;
 
-export interface QuizResponse {
+export interface QuizResponses {
   response_code?: keyof typeof ResponseCodeMessages;
   results: Quiz[];
 }
