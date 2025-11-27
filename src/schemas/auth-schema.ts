@@ -14,7 +14,10 @@ export const RegisterSchema = z.object({
   email: z.email().min(1, { message: "Email can't be empty" }),
   password: z
     .string()
-    .min(8, { message: 'Password atleast has to be 8 characters' }),
+    .min(8, { message: 'Password atleast has to be 8 characters' })
+    .regex(/^[A-Za-z0-9]+$/, {
+      message: 'String must contain only alphanumeric characters.',
+    }),
 });
 
 export type TRegisterForm = z.infer<typeof RegisterSchema>;

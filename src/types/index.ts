@@ -1,3 +1,13 @@
+/**
+ * Resolve mapped types and show the derived keys and their types when hovering in
+ * VS Code, instead of just showing the names those mapped types are defined with.
+ *
+ * References:
+ * - supabase-js codebase
+ * - https://twitter.com/mattpocockuk/status/1622730173446557697
+ */
+export type Prettify<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+
 export interface QuizCategory {
   id: number;
   name: string;
@@ -50,6 +60,8 @@ export interface User {
   avatar_url?: string;
 }
 
-export interface Account extends User {
-  preference: Preference;
-}
+export type Account = Prettify<
+  User & {
+    preference: Preference;
+  }
+>;

@@ -1,4 +1,4 @@
-import Footer from '@/components/layouting/footer';
+import Footer from '@/components/layout/footer';
 
 interface AuthLayoutProps {
   children: React.ReactNode;

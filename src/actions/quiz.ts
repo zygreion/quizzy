@@ -1,6 +1,5 @@
 'use server';
 
-import { withErrorHandling } from '@/lib/error-helper';
 import { createClient } from '@/lib/supabase/server';
 import { Preference } from '@/types';
 
@@ -11,7 +10,7 @@ interface TPreference extends Omit<Preference, 'category'> {
 export async function updatePreference(preference: TPreference) {
   const supabase = await createClient();
 
-  return await withErrorHandling(async () => {
+  try {
     const { data, error } = await supabase
       .from('user_preference')
       .upsert(preference, { onConflict: 'user_id' })
@@ -21,5 +20,7 @@ export async function updatePreference(preference: TPreference) {
     if (error) throw new Error(error.message);
 
     return data as Preference;
-  });
+  } catch (err) {
+    console.error(err);
+  }
 }

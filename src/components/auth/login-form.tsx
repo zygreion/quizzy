@@ -34,13 +34,15 @@ export default function LoginForm() {
   } = form;
 
   const onSubmit = handleSubmit(async (data) => {
-    const { preference, ...user } = await login(data);
+    const account = await login(data);
 
-    if (!user) {
+    if (!account) {
       setError('root', { message: 'Invalid email or password' });
       return;
     }
 
+    const { preference, ...user } = account;
+    
     if (preference) {
       setPreference(preference);
     }
