@@ -60,7 +60,13 @@ export default function QuizPage() {
           Question {Math.min(currentNo + 1, quizzes.length)} out of{' '}
           {quizzes.length}
         </p>
-        <div className={cn(timer > 15 ? 'text-amber-100' : 'text-destructive')}>
+        <div
+          className={cn(
+            timer > 15
+              ? 'text-amber-500 dark:text-amber-100'
+              : 'text-destructive'
+          )}
+        >
           <span>Time Left: </span>
           <span>{formatTimer(timer)}</span>
         </div>

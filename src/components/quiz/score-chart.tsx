@@ -115,7 +115,7 @@ export function ScoreChart() {
       clearQuizzes();
       clearAnswers();
       resetTimer();
-    }, 2000);
+    }, 500);
 
     return () => clearTimeout(timeout);
   }, [clearAnswers, clearQuizzes, resetTimer]);

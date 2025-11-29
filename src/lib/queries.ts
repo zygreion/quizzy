@@ -20,7 +20,6 @@ export async function getQuizzes(request: QuizRequest) {
     { ...request, encode: 'url3986' },
     { category_id: 'category' }
   );
-  console.log(searchParams);
   const response = await fetch(`${API_URL}?${searchParams}`);
 
   if (!response.ok) {

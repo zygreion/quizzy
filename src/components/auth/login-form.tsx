@@ -42,7 +42,7 @@ export default function LoginForm() {
     }
 
     const { preference, ...user } = account;
-    
+
     if (preference) {
       setPreference(preference);
     }
