@@ -87,8 +87,6 @@ export default function QuizForm() {
       return;
     }
 
-    clearAnswers();
-    setEnded(false);
     setQuizzes(quizzes);
     setPreference(mappedData);
 
@@ -111,6 +109,8 @@ export default function QuizForm() {
       resetTimer();
     }
   }, [clearAnswers, clearQuizzes, ended, resetTimer, setEnded]);
+
+  console.log(form.getValues().category_id);
 
   return (
     <Form {...form}>
@@ -142,7 +142,7 @@ export default function QuizForm() {
             <FormItem>
               <FormLabel>Category</FormLabel>
               <Select
-                onValueChange={field.onChange}
+                onValueChange={(value) => value && field.onChange(value)}
                 value={field.value?.toString()}
                 required
               >

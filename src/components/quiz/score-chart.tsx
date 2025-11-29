@@ -24,6 +24,7 @@ import { useQuizzesStore } from '@/hooks/use-quizzes-store';
 import { useProgressStore } from '@/hooks/use-progress-store';
 import { useAccountStore } from '@/hooks/use-account-store';
 import { notFound } from 'next/navigation';
+import { Button } from '../ui/button';
 
 const chartConfig = {
   incorrect: {
@@ -174,9 +175,11 @@ export function ScoreChart() {
           with {totalCorrect} correct and {totalIncorrect} incorrect answers.
         </div>
 
-        <Link href="/home" className="mt-4">
-          Generate More Quiz
-        </Link>
+        <Button asChild>
+          <Link href="/home" className="mt-4">
+            Generate More Quiz
+          </Link>
+        </Button>
       </CardFooter>
     </Card>
   );

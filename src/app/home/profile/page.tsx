@@ -14,7 +14,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useAccountStore } from '@/hooks/use-account-store';
-import { ProfileSchema, TProfileSchema } from '@/schemas/profile-schema';
+import {
+  IMAGE_TYPES,
+  ProfileSchema,
+  TProfileSchema,
+} from '@/schemas/profile-schema';
 import { User } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';

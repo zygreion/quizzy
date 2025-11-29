@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const IMAGE_TYPES = [
+export const IMAGE_TYPES = [
   'image/jpeg',
   'image/png',
   'image/gif',

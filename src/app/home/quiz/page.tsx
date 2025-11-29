@@ -21,6 +21,7 @@ export default function QuizPage() {
     ended,
     startTimer,
     setRunning,
+    setEnded,
   } = useProgressStore((state) => state);
 
   useTimerEffect();
@@ -31,7 +32,9 @@ export default function QuizPage() {
   useEffect(() => {
     if (!ended && !running) {
       startTimer(quizzes.length * 4);
-    } else {
+    }
+
+    if (!ended && running) {
       startTimer(timer);
     }
   }, [quizzes.length, running, startTimer, timer, ended]);
@@ -47,9 +50,10 @@ export default function QuizPage() {
 
   useEffect(() => {
     if ((!ended && running && timer <= 0) || currentNo >= quizzes.length) {
+      setEnded(true);
       router.push('/home/quiz/result');
     }
-  }, [timer, currentNo, quizzes, router, running, setRunning, ended]);
+  }, [timer, currentNo, quizzes, router, running, setRunning, ended, setEnded]);
 
   if (quizzes.length < 1) return notFound();
 
