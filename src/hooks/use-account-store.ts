@@ -21,7 +21,7 @@ const defaultInitState: AccountState = {
   display_name: '',
   avatar_url: '/assets/avatar-1.png',
 
-  preference: { amount: 20, category_id: 12, difficulty: 'easy', type: 'any' },
+  preference: { amount: 0, category_id: 12, difficulty: 'easy', type: 'any' },
 };
 
 const createAccountStore = (initState: AccountState = defaultInitState) => {

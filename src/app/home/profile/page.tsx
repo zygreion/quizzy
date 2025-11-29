@@ -57,7 +57,7 @@ export default function ProfilePage() {
     reset({
       id,
       email,
-      avatar_url,
+      avatar_url: avatar_url ?? '',
       first_name,
       last_name,
       display_name,

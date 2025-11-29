@@ -17,7 +17,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Button } from '../ui/button';
 import Link from 'next/link';
 import { quizCategories } from '@/lib/data';
 import { upperFirstChar } from '@/lib/utils';
@@ -45,10 +44,8 @@ export function ScoreChart() {
   const {
     preference: { difficulty, category_id },
   } = useAccountStore((state) => state);
-  const { quizzes, clearQuizzes } = useQuizzesStore((state) => state);
-  const { answers, setEnded, clearAnswers, resetTimer } = useProgressStore(
-    (state) => state
-  );
+  const { quizzes } = useQuizzesStore((state) => state);
+  const { answers } = useProgressStore((state) => state);
 
   const { totalCorrect, totalIncorrect, totalUnanswered } =
     React.useMemo(() => {
@@ -67,9 +64,7 @@ export function ScoreChart() {
 
   React.useEffect(() => {
     if (quizzes.length < 1) return notFound();
-
-    setEnded(true);
-  }, [quizzes.length, setEnded]);
+  }, [quizzes.length]);
 
   const { chartData, categoryDisplay, difficultyDisplay } =
     React.useMemo(() => {
@@ -109,16 +104,6 @@ export function ScoreChart() {
       totalIncorrect,
       totalUnanswered,
     ]);
-
-  const clearData = React.useCallback(() => {
-    const timeout = setTimeout(() => {
-      clearQuizzes();
-      clearAnswers();
-      resetTimer();
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [clearAnswers, clearQuizzes, resetTimer]);
 
   return (
     <Card className="flex flex-col">
@@ -189,9 +174,9 @@ export function ScoreChart() {
           with {totalCorrect} correct and {totalIncorrect} incorrect answers.
         </div>
 
-        <Button asChild className="mt-4" onClick={clearData}>
-          <Link href="/home">Generate More Quiz</Link>
-        </Button>
+        <Link href="/home" className="mt-4">
+          Generate More Quiz
+        </Link>
       </CardFooter>
     </Card>
   );

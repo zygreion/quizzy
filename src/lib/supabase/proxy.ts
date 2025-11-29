@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const publicRoutes = ['/'];
+const protectedRoutePrefixes = ['/home'];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -44,7 +44,7 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     !pathname.startsWith('/auth') &&
-    !publicRoutes.includes(pathname)
+    protectedRoutePrefixes.includes(pathname)
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();

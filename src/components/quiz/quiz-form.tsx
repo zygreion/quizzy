@@ -23,6 +23,7 @@ import { useQuizzesStore } from '@/hooks/use-quizzes-store';
 import { useProgressStore } from '@/hooks/use-progress-store';
 import { useAccountStore } from '@/hooks/use-account-store';
 import { updatePreference } from '@/actions/quiz';
+import { useEffect } from 'react';
 
 function clearAnyValues(data: Preference): Preference {
   const newData = { ...data };
@@ -44,8 +45,10 @@ export default function QuizForm() {
     preference: { amount, category_id, difficulty, type },
     setPreference,
   } = useAccountStore((state) => state);
-  const { setQuizzes } = useQuizzesStore((state) => state);
-  const { clearAnswers, setEnded } = useProgressStore((state) => state);
+  const { setQuizzes, clearQuizzes } = useQuizzesStore((state) => state);
+  const { ended, clearAnswers, setEnded, resetTimer } = useProgressStore(
+    (state) => state
+  );
 
   const router = useRouter();
   const form = useForm<Preference>({
@@ -56,8 +59,13 @@ export default function QuizForm() {
     handleSubmit,
     control,
     setError,
+    reset,
     formState: { isSubmitting, errors },
   } = form;
+
+  useEffect(() => {
+    reset({ amount, category_id, difficulty, type });
+  }, [amount, category_id, difficulty, type, reset]);
 
   const onSubmit = handleSubmit(async (rawData: Preference) => {
     const mappedData = {
@@ -93,6 +101,16 @@ export default function QuizForm() {
 
     router.push('/home/quiz');
   });
+
+  // Clear previous quizz progress
+  useEffect(() => {
+    if (ended) {
+      setEnded(false);
+      clearQuizzes();
+      clearAnswers();
+      resetTimer();
+    }
+  }, [clearAnswers, clearQuizzes, ended, resetTimer, setEnded]);
 
   return (
     <Form {...form}>
