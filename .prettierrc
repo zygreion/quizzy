@@ -6,7 +6,7 @@
   "semi": true,
   "singleQuote": true,
   "bracketSpacing": true,
-  "tailwindFunctions": ["clsx", "cva"],
+  "tailwindFunctions": ["clsx", "cva", "cn"],
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindConfig": "./tailwind.config.ts"
 }

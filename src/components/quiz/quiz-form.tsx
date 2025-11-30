@@ -110,8 +110,6 @@ export default function QuizForm() {
     }
   }, [clearAnswers, clearQuizzes, ended, resetTimer, setEnded]);
 
-  console.log(form.getValues().category_id);
-
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="flex flex-col gap-6">

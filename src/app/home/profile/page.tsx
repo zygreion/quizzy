@@ -113,9 +113,11 @@ export default function ProfilePage() {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      field.onChange(file); // set File ke react-hook-form
                       if (file) {
-                        setPreview(URL.createObjectURL(file));
+                        field.onChange(file); // set File ke react-hook-form
+                        if (IMAGE_TYPES.includes(file.type)) {
+                          setPreview(URL.createObjectURL(file));
+                        }
                       }
                     }}
                   />
