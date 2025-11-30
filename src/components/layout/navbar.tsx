@@ -38,7 +38,7 @@ export function Navbar() {
   return (
     <nav className="flex w-full items-center justify-between gap-4 py-4">
       <Link href="/home" className="flex items-center gap-2">
-        <span className="font-serif text-xl font-semibold text-orange-300">
+        <span className="font-serif text-2xl font-semibold text-orange-300">
           Quizzy
         </span>
       </Link>
@@ -48,7 +48,7 @@ export function Navbar() {
         <DropdownMenuTrigger className="hover:border-ring ring-primary/50 rounded-2xl hover:cursor-pointer hover:ring-1">
           <div>
             <Avatar>
-              <AvatarImage src={avatar_url} alt="" />
+              <AvatarImage src={avatar_url} alt="" className="object-cover" />
               <AvatarFallback>
                 {display_name.charAt(0).toUpperCase()}
               </AvatarFallback>

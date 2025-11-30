@@ -51,9 +51,9 @@ export default function RegisterForm() {
       password: data.password,
     };
 
-    const user = await register(newData);
+    const userAvailability = await register(newData);
 
-    if (!user) {
+    if (!userAvailability) {
       setError('email', { message: 'Email has already used' });
 
       return;

@@ -9,11 +9,17 @@ export const IMAGE_TYPES = [
 ];
 
 export const ProfileSchema = z.object({
-  id: z.string().min(1, { message: "Id can't be empty" }),
-  email: z.email().min(1, { message: "Email can't be empty" }),
-  first_name: z.string().min(1, { message: "First name can't be empty" }),
-  last_name: z.string().min(1, { message: "Last name can't be empty" }),
-  display_name: z.string().min(1, { message: "Display name can't be empty" }),
+  id: z.string().min(1, { error: "Id can't be empty" }),
+  email: z.email().min(1, { error: "Email can't be empty" }),
+  first_name: z
+    .string()
+    .min(1, { error: "First name can't be empty" })
+    .trim(),
+  last_name: z.string().min(1, { error: "Last name can't be empty" }).trim(),
+  display_name: z
+    .string()
+    .min(1, { error: "Display name can't be empty" })
+    .trim(),
   avatar_url: z.string().optional(),
   avatar_image: z
     .instanceof(File)
