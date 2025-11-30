@@ -66,7 +66,7 @@ export function Navbar() {
           </DropdownMenuItem>
           <DropdownMenuItem>History</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <button
               onClick={handleLogout}
               type="submit"

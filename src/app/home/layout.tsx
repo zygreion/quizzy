@@ -11,7 +11,7 @@ export default async function HomeLayout({
   return (
     <div className="mx-auto flex min-h-dvh max-w-xl flex-col items-center gap-6 *:px-6">
       <Navbar />
-      <main className="flex w-full grow flex-col pt-4 pb-20">{children}</main>
+      <main className="flex w-full grow flex-col py-4">{children}</main>
       <Footer />
     </div>
   );
